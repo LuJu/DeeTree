@@ -148,16 +148,16 @@ bool WNode::comparatorIDMore(const WNode* s1, const WNode* s2)
     return s2->get_id()<s1->get_id();
 }
 
-quint16 WNode::get_level(){
+int WNode::get_level(){
     if(_parent!=NULL){
         return _parent->get_level()+1;
     } else return 1;
 }
 
-quint16 WNode::get_number_of_levels(){
-    quint16 levels=0;
-    quint16 max=0;
-    quint16 current=0;
+int WNode::get_number_of_levels(){
+    int levels=0;
+    int max=0;
+    int current=0;
     if (is_leaf()) levels=1;
     else {
         QList<WNode*>::const_iterator i;

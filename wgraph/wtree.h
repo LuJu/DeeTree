@@ -31,6 +31,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <QStringList>
 #include "wnode.h"
 
+//! This class represents a tree containing nodes. A tree is a non-cyclic graph
+//! where each node can have zero or more children
 class WTree : public QList<WNode*>
 {
 public:
@@ -47,15 +49,19 @@ public:
     virtual void append(WNode *const&t);
     //! Add the type t in the tree
     /*!
-            \n Status  1 : not implemented
-            \param  t : an object of the class of the tree
-            \param  parentid : the id of the node parent of the object given in parameter
-            \return the id of the newly created node
-        */
+        \n Status  1 : not implemented
+        \param  t : an object of the class of the tree
+        \param  parentid : the id of the node parent of the object given in parameter
+        \return the id of the newly created node
+    */
     quint16 addNode(void* t=NULL, int parentid=-1);
-    inline WNode * get_root()const{
-        return _root;
-    }
+    //! Returns the root of the tree
+    /*!
+        The root of the tree is the first node and does not have parent.
+        \n Status  1 : not implemented
+        \return The root or NULL if the tree has no root yet
+    */
+    inline WNode * get_root()const{ return _root; }
     void buildTest();
 
     WNode *get_node_by_id(quint16 id);
@@ -65,11 +71,11 @@ public:
 
 private:
     void recursiveBuilding(QString folder, quint16 id);
-    quint16 _next_id;
+    unsigned int _next_id;
     WNode * _root;
 
     bool _number_of_level_outdated;
-    quint16 _number_of_levels;
+    int _number_of_levels;
     
     int _max_children_per_node;
 };

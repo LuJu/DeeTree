@@ -32,6 +32,9 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <QList>
 #include <QDebug>
 #include <qmath.h>
+
+//! This class represents a node in a tree. It provides several methods to
+//! manipulate and get information on it
 class WNode
 {
 public:
@@ -56,7 +59,8 @@ public:
     //! Returns the numnber of children, recursively or not
     /*!
         Returns the number of children that the node has. \n
-        If recursive is set to false, it returns only the direct children. If set to true, it returns all the descendants in the hierarchy
+        If recursive is set to false, it returns only the direct children.
+        If set to true, it returns all the descendants in the hierarchy
         \n Status  1 : not implemented
         \param  recursive : Whether it counts all the descendants or not
         \return The number of children
@@ -79,8 +83,8 @@ public:
     static bool comparatorTotalSizeMore(const WNode* s1, const WNode* s2);
     static bool comparatorIDLess(const WNode* s1, const WNode* s2);
     static bool comparatorIDMore(const WNode* s1, const WNode* s2);
-    quint16 get_number_of_levels();
-    quint16 get_level();
+    int get_number_of_levels();
+    int get_level();
     inline QList<WNode*>::const_iterator get_begin()const{return _children.begin();}
     inline QList<WNode*>::const_iterator get_end()const{return _children.end();}
     inline WNode * childAt(int index){ return _children.at(index);}
