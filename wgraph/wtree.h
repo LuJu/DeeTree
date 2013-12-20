@@ -62,7 +62,6 @@ public:
         \return The root or NULL if the tree has no root yet
     */
     inline WNode * get_root()const{ return _root; }
-    void buildTest();
 
     WNode *get_node_by_id(quint16 id);
     
@@ -70,7 +69,6 @@ public:
     int get_max_children_per_node() const {return _max_children_per_node;}
 
 private:
-    void recursiveBuilding(QString folder, quint16 id);
     unsigned int _next_id;
     WNode * _root;
 
