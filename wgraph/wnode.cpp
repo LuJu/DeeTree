@@ -55,9 +55,9 @@ bool operator<(const WNode &value1,const WNode &value2){
     return value1.get_number_of_children()<value2.get_number_of_children();
 }
 
-quint16 WNode::get_number_of_children(bool recursive) const{
+int WNode::get_number_of_children(bool recursive) const{
     QList<WNode*>::const_iterator i;
-    quint16 number=0;
+    int number=0;
     if (!recursive){
         return _children.size();
     } else {
@@ -94,24 +94,28 @@ int WNode::getK(int start){
     return 0.0;
 }
 
-void WNode::sort(quint8 type){
-    _sorted=true;
+void WNode::sort(SortingTypes type){
     switch (type){
     case SIZE:
         qSort(_children.begin(),_children.end(),comparatorSizeLess);
         break;
     case SIZE_BACK:
-    if (type == SIZE_BACK)
         qSort(_children.begin(),_children.end(),comparatorSizeMore);
         break;
     case ID:
          qSort(_children.begin(),_children.end(),comparatorIDLess);
         break;
+    case TOTAL_SIZE:
+        qSort(_children.begin(),_children.end(),comparatorTotalSizeLess);
+        break;
+    case TOTAL_SIZE_BACK:
+        qSort(_children.begin(),_children.end(),comparatorTotalSizeMore);
+        break;
     default:
         _sorted=false;
         break;
     }
-
+    _sorted=true;
 }
 
 bool WNode::comparatorSizeLess(const WNode* s1, const WNode* s2)
@@ -122,6 +126,16 @@ bool WNode::comparatorSizeLess(const WNode* s1, const WNode* s2)
 bool WNode::comparatorSizeMore(const WNode* s1, const WNode* s2)
 {
     return (*s2)<(*s1);
+}
+
+bool WNode::comparatorTotalSizeLess(const WNode* s1, const WNode* s2)
+{
+    return (s1->get_number_of_children(true)<s2->get_number_of_children(true));
+}
+
+bool WNode::comparatorTotalSizeMore(const WNode* s1, const WNode* s2)
+{
+    return (s2->get_number_of_children(true)<s1->get_number_of_children(true));
 }
 
 bool WNode::comparatorIDLess(const WNode* s1, const WNode* s2)

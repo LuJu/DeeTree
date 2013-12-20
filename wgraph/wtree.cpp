@@ -26,21 +26,19 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 #include "wtree.h"
 
-WTree::WTree()
-{
-    _next_id=0;
-    _root=NULL;
-    _number_of_level_outdated=true;
-    _number_of_levels=0;
+WTree::WTree():
+    _max_children_per_node(0),
+    _next_id(0),
+    _root(NULL),
+    _number_of_level_outdated(true),
+    _number_of_levels(0){
+    
 }
 
 //! Deletes all the nodes inside the tree
 /*!
     */
 WTree::~WTree(){
-    for (int i=0; i<this->size(); i++){
-        delete (QString*) (this->value(i)->detach());
-    }
     for (int i=0; i<this->size(); i++){
         delete this->value(i);
     }
@@ -63,12 +61,14 @@ void WTree::append(WNode *const&t){
 
 quint16 WTree::addNode(void* t, int parentid){
     WNode* node = new WNode(t);
-    WNode * parent=NULL;
+    WNode* parent=NULL;
     append(node);
     if (parentid>=0){
         parent=get_node_by_id(parentid);
         node->set_parent(parent);
         parent->addToChildren(node);
+        if (node->get_number_of_children() > _max_children_per_node)
+            _max_children_per_node = node->get_number_of_children();
     }
     return node->get_id();
 }

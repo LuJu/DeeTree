@@ -1,4 +1,3 @@
-
 /*
 Copyright (c) 2013, Lucas Juliéron
 All rights reserved.
@@ -60,6 +59,9 @@ public:
     void buildTest();
 
     WNode *get_node_by_id(quint16 id);
+    
+    //! Returns the maximum number of children a node has in the tree
+    int get_max_children_per_node() const {return _max_children_per_node;}
 
 private:
     void recursiveBuilding(QString folder, quint16 id);
@@ -68,6 +70,8 @@ private:
 
     bool _number_of_level_outdated;
     quint16 _number_of_levels;
+    
+    int _max_children_per_node;
 };
 
 #endif // WTREE_H

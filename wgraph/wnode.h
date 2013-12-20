@@ -39,7 +39,8 @@ public:
         SIZE,
         SIZE_BACK,
         ID,
-        TOTAL_SIZE
+        TOTAL_SIZE,
+        TOTAL_SIZE_BACK
     };
     WNode(void *data=NULL);
     ~WNode();
@@ -48,9 +49,9 @@ public:
     inline void set_data(void* data){_data=data;}
     inline WNode * get_parent()const{return _parent;}
     inline void set_parent(WNode * parent){_parent=parent;}
-    inline quint16 get_id()const{return _id;}
-    inline bool is_root(){return _parent==NULL;}
-    inline bool is_leaf(){ return _children.size()==0;}
+    inline unsigned int get_id() const {return _id;}
+    inline bool is_root() const {return _parent==NULL;}
+    inline bool is_leaf() const {return _children.size()==0;}
     void * detach();
     //! Returns the numnber of children, recursively or not
     /*!
@@ -60,14 +61,22 @@ public:
         \param  recursive : Whether it counts all the descendants or not
         \return The number of children
     */
-    quint16 get_number_of_children(bool recursive = false) const;
+    int get_number_of_children(bool recursive = false) const;
     inline void set_id(quint16 id){_id=id;}
-    void sort(quint8 type=SIZE);
+
+    //! Sorts the children of this node
+    /*!
+        This function modifies the list of children and sorts them according to the SortingTypes selected
+        \param  the sorting type chosen
+    */
+    void sort(SortingTypes type=SIZE);
 
 
     friend bool operator<(const WNode &value1,const WNode &value2);
     static bool comparatorSizeLess(const WNode* s1, const WNode* s2);
     static bool comparatorSizeMore(const WNode* s1, const WNode* s2);
+    static bool comparatorTotalSizeLess(const WNode* s1, const WNode* s2);
+    static bool comparatorTotalSizeMore(const WNode* s1, const WNode* s2);
     static bool comparatorIDLess(const WNode* s1, const WNode* s2);
     static bool comparatorIDMore(const WNode* s1, const WNode* s2);
     quint16 get_number_of_levels();
@@ -78,7 +87,7 @@ public:
     int getK(int start=0);
 private:
     void* _data;
-    quint16 _id;
+    unsigned int _id;
     QList<WNode*> _children;
     WNode * _parent;
     bool _sorted;
