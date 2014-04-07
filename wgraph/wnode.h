@@ -35,7 +35,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 //! This class represents a node in a tree. It provides several methods to
 //! manipulate and get information on it
-class WNode
+template <class T> class WNode
 {
 public:
     enum SortingTypes{
@@ -45,11 +45,11 @@ public:
         TOTAL_SIZE,
         TOTAL_SIZE_BACK
     };
-    WNode(void *data=NULL);
+    WNode(const T* data);
     ~WNode();
     void addToChildren(WNode* node);
-    inline void* get_data()const{return _data;}
-    inline void set_data(void* data){_data=data;}
+    inline T* get_data()const{return _data;}
+    inline void set_data(T* data){_data=data;}
     inline WNode * get_parent()const{return _parent;}
     inline void set_parent(WNode * parent){_parent=parent;}
     inline unsigned int get_id() const {return _id;}
@@ -76,7 +76,7 @@ public:
     void sort(SortingTypes type=SIZE);
 
 
-    friend bool operator<(const WNode &value1,const WNode &value2);
+//    bool operator<(const WNode<T> &value1,const WNode<T> &value2);
     static bool comparatorSizeLess(const WNode* s1, const WNode* s2);
     static bool comparatorSizeMore(const WNode* s1, const WNode* s2);
     static bool comparatorTotalSizeLess(const WNode* s1, const WNode* s2);
@@ -85,16 +85,167 @@ public:
     static bool comparatorIDMore(const WNode* s1, const WNode* s2);
     int get_number_of_levels();
     int get_level();
-    inline QList<WNode*>::const_iterator get_begin()const{return _children.begin();}
-    inline QList<WNode*>::const_iterator get_end()const{return _children.end();}
+    typename QList<WNode<T>* >::const_iterator get_begin()const{return _children.begin();}
+    typename QList<WNode<T>* >::const_iterator get_end()const{return _children.end();}
     inline WNode * childAt(int index){ return _children.at(index);}
     int getK(int start=0);
 private:
-    void* _data;
+    T* _data;
     unsigned int _id;
     QList<WNode*> _children;
     WNode * _parent;
     bool _sorted;
 };
+
+template<class T>
+WNode<T>::WNode(const T *data){
+    _data=data;_id=0;
+    _parent=NULL;
+    _sorted=false;
+}
+
+template<class T>
+WNode<T>::~WNode(){
+}
+
+template<class T>
+void * WNode<T>::detach(){
+    T * ret = _data;
+   _data=NULL;
+    return ret;
+}
+
+template<class T>
+void WNode<T>::addToChildren(WNode<T>* node){
+    _children.append(node);
+    node->set_parent(this);
+    _sorted=false;
+}
+
+template<class T>
+bool operator<(const WNode<T> &value1,const WNode<T> &value2){
+    return value1.get_number_of_children()<value2.get_number_of_children();
+}
+template<class T>
+int WNode<T>::get_number_of_children(bool recursive) const{
+    typename QList<WNode<T> *>::const_iterator i;
+    int number=0;
+    if (!recursive){
+        return _children.size();
+    } else {
+        for(i=_children.begin();i!=_children.end();i++){
+            number+=((WNode<T>)*i).get_number_of_children(true);
+        }
+        return number;
+    }
+}
+
+template<class T>
+int WNode<T>::getK(int start){
+    if (!is_leaf()){
+        double pi=3.141592;
+        int k = 1;
+        double n=get_number_of_children()-start;
+        double fn=((1-qSin(pi/n))*(1-qSin(pi/n)))/((1+qSin(pi/n))*(1+qSin(pi/n)));
+        if (!_sorted) sort(SIZE_BACK);
+        int total_grand_children=0;
+        int k_grand_children=0;
+        for(int i=start;i<get_number_of_children();i++){
+            total_grand_children+=_children[i]->get_number_of_children();
+        }
+        if (total_grand_children>0){
+            while(k_grand_children/total_grand_children<=fn){
+                for(int j=start;j<k+start;j++){
+                    k_grand_children+=_children[j]->get_number_of_children();
+                }
+                k++;
+            }
+            return k;
+        }
+        else return n;
+    }
+    return 0.0;
+}
+
+template<class T>
+void WNode<T>::sort(SortingTypes type){
+    switch (type){
+    case SIZE:
+        qSort(_children.begin(),_children.end(),comparatorSizeLess);
+        break;
+    case SIZE_BACK:
+        qSort(_children.begin(),_children.end(),comparatorSizeMore);
+        break;
+    case ID:
+         qSort(_children.begin(),_children.end(),comparatorIDLess);
+        break;
+    case TOTAL_SIZE:
+        qSort(_children.begin(),_children.end(),comparatorTotalSizeLess);
+        break;
+    case TOTAL_SIZE_BACK:
+        qSort(_children.begin(),_children.end(),comparatorTotalSizeMore);
+        break;
+    default:
+        _sorted=false;
+        break;
+    }
+    _sorted=true;
+}
+
+template<class T>
+bool WNode<T>::comparatorSizeLess(const WNode<T>* s1, const WNode<T>* s2)
+{
+    return (*s1)<(*s2);
+}
+template<class T>
+bool WNode<T>::comparatorSizeMore(const WNode<T>* s1, const WNode<T>* s2)
+{
+    return (*s2)<(*s1);
+}
+template<class T>
+bool WNode<T>::comparatorTotalSizeLess(const WNode<T>* s1, const WNode<T>* s2)
+{
+    return (s1->get_number_of_children(true)<s2->get_number_of_children(true));
+}
+template<class T>
+bool WNode<T>::comparatorTotalSizeMore(const WNode<T>* s1, const WNode<T>* s2)
+{
+    return (s2->get_number_of_children(true)<s1->get_number_of_children(true));
+}
+template<class T>
+bool WNode<T>::comparatorIDLess(const WNode<T>* s1, const WNode<T>* s2)
+{
+    return s1->get_id()<s2->get_id();
+}
+template<class T>
+bool WNode<T>::comparatorIDMore(const WNode<T>* s1, const WNode<T>* s2)
+{
+    return s2->get_id()<s1->get_id();
+}
+template<class T>
+int WNode<T>::get_level(){
+    if(_parent!=NULL){
+        return _parent->get_level()+1;
+    } else return 1;
+}
+template<class T>
+int WNode<T>::get_number_of_levels(){
+    int levels=0;
+    int max=0;
+    int current=0;
+    if (is_leaf()) levels=1;
+    else {
+        typename QList<WNode<T>*>::const_iterator i;
+        for (i=_children.begin();i!=_children.end();i++){
+            current = ((WNode<T>)*i).get_number_of_levels();
+            if(max<current) max=current;
+        }
+        levels = 1+max;
+    }
+    return levels;
+}
+
+
+
 
 #endif
