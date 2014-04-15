@@ -55,7 +55,7 @@ public:
         \param  parentid : the id of the node parent of the object given in parameter
         \return the id of the newly created node
     */
-    int addNode(void* t=NULL, int parentid=-1);
+    int addNode(T* t=NULL, int parentid=-1);
     //! Returns the root of the tree
     /*!
         The root of the tree is the first node and does not have parent.
@@ -74,7 +74,7 @@ private:
     WNode<T> * _root;
 
     mutable bool _number_of_level_outdated;
-    int _number_of_levels;
+    mutable int _number_of_levels;
     
     int _max_children_per_node;
 };
@@ -115,7 +115,7 @@ void WTree<T>::append(WNode<T> *const&t){
 }
 
 template<class T>
-int WTree<T>::addNode(void* t, int parentid){
+int WTree<T>::addNode(T *t, int parentid){
     WNode<T>* node = new WNode<T>(t);
     WNode<T>* parent=NULL;
     append(node);

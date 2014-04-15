@@ -45,7 +45,7 @@ public:
         TOTAL_SIZE,
         TOTAL_SIZE_BACK
     };
-    WNode(const T* data);
+    WNode(T* data);
     ~WNode();
     void addToChildren(WNode* node);
     inline T* get_data()const{return _data;}
@@ -88,6 +88,7 @@ public:
     typename QList<WNode<T>* >::const_iterator get_begin()const{return _children.begin();}
     typename QList<WNode<T>* >::const_iterator get_end()const{return _children.end();}
     inline WNode * childAt(int index){ return _children.at(index);}
+    const WNode * childAt(int index) const{ return _children.at(index);}
     int getK(int start=0);
 private:
     T* _data;
@@ -98,7 +99,7 @@ private:
 };
 
 template<class T>
-WNode<T>::WNode(const T *data){
+WNode<T>::WNode(T *data){
     _data=data;_id=0;
     _parent=NULL;
     _sorted=false;
@@ -129,12 +130,13 @@ bool operator<(const WNode<T> &value1,const WNode<T> &value2){
 template<class T>
 int WNode<T>::get_number_of_children(bool recursive) const{
     typename QList<WNode<T> *>::const_iterator i;
+    WNode * child;
     int number=0;
     if (!recursive){
         return _children.size();
     } else {
         for(i=_children.begin();i!=_children.end();i++){
-            number+=((WNode<T>)*i).get_number_of_children(true);
+            number+=(*i)->get_number_of_children(true);
         }
         return number;
     }
@@ -237,7 +239,7 @@ int WNode<T>::get_number_of_levels(){
     else {
         typename QList<WNode<T>*>::const_iterator i;
         for (i=_children.begin();i!=_children.end();i++){
-            current = ((WNode<T>)*i).get_number_of_levels();
+            current = (*i)->get_number_of_levels();
             if(max<current) max=current;
         }
         levels = 1+max;
