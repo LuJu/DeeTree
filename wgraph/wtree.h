@@ -55,7 +55,7 @@ public:
         \param  parentid : the id of the node parent of the object given in parameter
         \return the id of the newly created node
     */
-    int addNode(T* t=NULL, int parentid=-1);
+    int addNode(const QString& name="" ,T* t=NULL, int parentid=-1);
     //! Returns the root of the tree
     /*!
         The root of the tree is the first node and does not have parent.
@@ -65,6 +65,7 @@ public:
     inline WNode<T> * get_root()const{ return _root; }
 
     WNode<T> *get_node_by_id(int id);
+    WNode<T> *get_node_by_name(const QString& name);
     
     //! Returns the maximum number of children a node has in the tree
     int get_max_children_per_node() const {return _max_children_per_node;}
@@ -115,8 +116,9 @@ void WTree<T>::append(WNode<T> *const&t){
 }
 
 template<class T>
-int WTree<T>::addNode(T *t, int parentid){
+int WTree<T>::addNode(const QString& name,T *t, int parentid){
     WNode<T>* node = new WNode<T>(t);
+    node->set_name(name);
     WNode<T>* parent=NULL;
     append(node);
     if (parentid>=0){
@@ -134,6 +136,14 @@ WNode<T> * WTree<T>::get_node_by_id(int id){
     typename WTree<T>::iterator i;
     for (i=this->begin();i!=this->end();i++){
         if (((WNode<T>*)*i)->get_id()==id) return *i;
+    }
+    return NULL;
+}
+template<class T>
+WNode<T> * WTree<T>::get_node_by_name(const QString& name){
+    typename WTree<T>::iterator i;
+    for (i=this->begin();i!=this->end();i++){
+        if (((WNode<T>*)*i)->get_name()==name) return *i;
     }
     return NULL;
 }

@@ -90,9 +90,14 @@ public:
     inline WNode * childAt(int index){ return _children.at(index);}
     const WNode * childAt(int index) const{ return _children.at(index);}
     int getK(int start=0);
+
+    QString& get_name() {return _name;}
+    void set_name(const QString& name){_name = name;}
+
 private:
     T* _data;
     unsigned int _id;
+    QString _name;
     QList<WNode*> _children;
     WNode * _parent;
     bool _sorted;
