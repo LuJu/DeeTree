@@ -70,7 +70,7 @@ public:
     //! Returns the maximum number of children a node has in the tree
     int get_max_children_per_node() const {return _max_children_per_node;}
 
-private:
+protected:
     unsigned int _next_id;
     WNode<T> * _root;
 

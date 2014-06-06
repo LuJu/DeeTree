@@ -94,7 +94,7 @@ public:
     QString& get_name() {return _name;}
     void set_name(const QString& name){_name = name;}
 
-private:
+protected:
     T* _data;
     unsigned int _id;
     QString _name;
